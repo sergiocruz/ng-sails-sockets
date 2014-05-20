@@ -1,1 +1,5 @@
-<p>This is the user view.</p>
+<h1>Users</h1>
+
+<div ng-repeat="user in users">
+  <a href="#/user/{{user.id}}">{{user.name}}</a>
+</div>

@@ -17,6 +17,10 @@ angular
         templateUrl: 'views/user.html',
         controller: 'UserCtrl'
       })
+      .when('/user/:id', {
+        templateUrl: 'views/user-details.html',
+        controller: 'UserDetailCtrl'
+      })
       .otherwise({
         redirectTo: '/'
       });

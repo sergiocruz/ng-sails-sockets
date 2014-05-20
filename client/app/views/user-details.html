@@ -1,0 +1,25 @@
+<p>
+  <a href="#/user">Back to users views</a>
+</p>
+
+<form ng-submit="updateUser(user)">
+  <p>
+    <label>ID:</label> {{user.id}}
+  </p>
+
+  <p>
+    <label for="name">Name:</label><br />
+    <input type="text" id="name" ng-model="user.name">
+  </p>
+
+  <p>
+    <label>Created:</label>
+    {{user.createdAt | date}}
+  </p>
+
+  <p>
+    <button type="submit" class="btn btn-primary">Update</button>
+  </p>
+</form>
+
+

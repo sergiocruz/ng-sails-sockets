@@ -1,14 +1,24 @@
 'use strict';
 
 angular.module('socketClientApp')
-  .service('Usersocket', function Usersocket() {
+  .factory('Usersocket', function () {
 
+    /**
+     * IO Object previously defined in script tag included from remove server
+     */
+    var io = window.io;
+    var socket = window.socket || null;
+    var onMessageCallback = function() {};
 
-
-    (function (io) {
+    /**
+     * Connects to remote server
+     * @return {Object} Socket object
+     */
+    function connect() {
 
       // as soon as this file is loaded, connect automatically, 
       var socket = io.connect('http://10.55.56.83:1337');
+
       if (typeof console !== 'undefined') {
         log('Connecting to Sails.js...');
       }
@@ -26,25 +36,13 @@ angular.module('socketClientApp')
           log('New comet message received :: ', message);
           //////////////////////////////////////////////////////
 
+          // Callback
+          onMessageCallback.apply(onMessageCallback, arguments);
         });
 
-        socket.get('/user', function(o) {
-          console.log('Got user:', o);
-        });
-
-
-        ///////////////////////////////////////////////////////////
-        // Here's where you'll want to add any custom logic for
-        // when the browser establishes its socket connection to 
-        // the Sails.js server.
-        ///////////////////////////////////////////////////////////
-        log(
-            'Socket is now connected and globally accessible as `socket`.\n' + 
-            'e.g. to send a GET request to Sails, try \n' + 
-            '`socket.get("/", function (response) ' +
-            '{ console.log(response); })`'
-        );
-        ///////////////////////////////////////////////////////////
+        // socket.get('/user', function(o) {
+        //   log('Got user:', o);
+        // });
 
 
       });
@@ -52,7 +50,7 @@ angular.module('socketClientApp')
 
       // Expose connected `socket` instance globally so that it's easy
       // to experiment with from the browser console while prototyping.
-      window.socket = socket;
+      // window.socket = socket;
 
 
       // Simple log function to keep the example simple
@@ -61,13 +59,30 @@ angular.module('socketClientApp')
           console.log.apply(console, arguments);
         }
       }
-      
 
-    })(
+      return socket;
+    }
 
-      // In case you're wrapping socket.io to prevent pollution of the global namespace,
-      // you can replace `window.io` with your own `io` here:
-      window.io
+    
+    return {
 
-    );
+      onMessageReceived: function(cb) {
+        onMessageCallback = cb;
+      },
+
+      /**
+       * Gets socket connection
+       * @return {object} Socket object
+       */
+      connect: function getSocket() {
+
+        // If socket is null, executes connection
+        if (socket === null) {
+          socket = connect();
+        }
+
+        return socket;
+      }
+    }
+
   });
